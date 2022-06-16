@@ -44,7 +44,9 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
 ]
 THIRDPARTY_APPS = []
-PROJECT_APPS = []
+PROJECT_APPS = [
+    "core.apps.CoreConfig",
+]
 
 INSTALLED_APPS = DJANGO_APPS + THIRDPARTY_APPS + PROJECT_APPS
 
