@@ -1,0 +1,10 @@
+{
+  "name": "dmvhanin-v2",
+  "version": "1.0.0",
+  "description": "DMVhanin version 2 with django",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/texasroh/dmvhanin-v2.git"
+  }
+}
