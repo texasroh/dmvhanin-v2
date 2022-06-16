@@ -14,6 +14,7 @@ class User(AbstractUser, core_models.TimeStampModel):
         (LOGIN_EMAIL, "Email"),
     )
 
+    nickname = models.CharField(max_length=20, default="")
     email_verified = models.BooleanField(default=False)
     email_secret = models.CharField(max_length=120, default="", blank=True)
     login_method = models.CharField(
