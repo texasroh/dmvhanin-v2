@@ -51,7 +51,7 @@ class Business(core_models.TimeStampModel):
     name_eng = models.CharField(max_length=50)
 
     business_type = models.CharField(
-        BUSINESS_TYPE_CHOICES, max_length=20, default=BUSINESS_TYPE_OFFLINE
+        choices=BUSINESS_TYPE_CHOICES, max_length=20, default=BUSINESS_TYPE_OFFLINE
     )
 
     address = models.CharField(max_length=100)
