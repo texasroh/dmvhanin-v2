@@ -4,11 +4,12 @@ from django.db import models
 
 
 class Category(core_models.TimeStampModel):
-    category1 = models.CharField(max_length=50)
-    category2 = models.CharField(max_length=50)
+    category = models.CharField(max_length=50)
+    subcategory = models.CharField(max_length=50)
 
     class Meta:
         verbose_name_plural = "Categories"
+        unique_together = ("category", "subcategory")
 
 
 class Photo:
