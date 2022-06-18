@@ -17,9 +17,10 @@ import os
 
 from django.conf import settings
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
 urlpatterns = [
+    path("", include("core.urls", namespace="core")),
     path(
         "admin/" if settings.DEBUG else settings.ADMIN_URL,
         admin.site.urls,

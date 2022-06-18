@@ -1,0 +1,15 @@
+{% load static %}
+<header>
+    <div class="max-w-screen-2xl mx-auto flex justify-between items-center">
+        <div>
+            <a href="{% url 'core:home' %}"><img src="{% static 'img/icon.png' %}"></a>
+        </div>
+        <div>
+            {% if user.is_authenticated %}
+            logged in
+            {% else %}
+            Log in
+            {% endif %}
+        </div>
+    </div>
+</header>

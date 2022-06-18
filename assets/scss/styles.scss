@@ -1,8 +1,17 @@
 @tailwind base;
 @tailwind components;
 
+body {
+    @apply min-h-screen;
+}
 
+header {
+    @apply border-b-4 border-green-500 p-3 fixed top-0 w-full;
 
+    img {
+        @apply w-12;
+    }
+}
 
 
 @tailwind utilities;
