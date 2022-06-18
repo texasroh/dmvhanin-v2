@@ -8,6 +8,10 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("category", "subcategory")
 
 
+class PhotoInline(admin.TabularInline):
+    model = models.Photo
+
+
 @admin.register(models.Business)
 class BusinessAdmin(admin.ModelAdmin):
-    pass
+    inlines = (PhotoInline,)

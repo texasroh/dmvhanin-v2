@@ -21,7 +21,7 @@ from django.urls import path
 
 urlpatterns = [
     path(
-        "admin/" if settings.DEBUG else os.environ.get("ADMIN_URL", "admin/"),
+        "admin/" if settings.DEBUG else settings.ADMIN_URL,
         admin.site.urls,
     ),
 ]

@@ -1,5 +1,6 @@
 from core import models as core_models
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -11,12 +12,8 @@ class Category(core_models.TimeStampModel):
         verbose_name_plural = "Categories"
         unique_together = ("category", "subcategory")
 
-
-class Photo:
-    file = models.ImageField(upload_to="business_photos")
-    business = models.ForeignKey(
-        "Business", related_name="photos", on_delete=models.CASCADE
-    )
+    def __str__(self):
+        return f"{self.category} - {self.subcategory}"
 
 
 def zipcode_validator(zipcode):
@@ -74,3 +71,19 @@ class Business(core_models.TimeStampModel):
 
     class Meta:
         verbose_name_plural = "Businesses"
+
+
+class Photo(core_models.TimeStampModel):
+    file = models.ImageField(upload_to="business_photos")
+    business = models.ForeignKey(
+        Business, related_name="photos", on_delete=models.CASCADE
+    )
+
+
+class Review(core_models.TimeStampModel):
+    created_by = models.ForeignKey(
+        "users.User", related_name="business_reviews", on_delete=models.CASCADE
+    )
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
