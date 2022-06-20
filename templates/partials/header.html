@@ -1,6 +1,6 @@
 {% load static %}
 <header>
-    <div class="max-w-screen-2xl mx-auto flex justify-between items-center">
+    <div class="max-w-screen-xl mx-auto flex justify-between items-center">
         <div>
             <a href="{% url 'core:home' %}"><img src="{% static 'img/icon.png' %}"></a>
         </div>
@@ -8,7 +8,8 @@
             {% if user.is_authenticated %}
             logged in
             {% else %}
-            Log in
+            <a href="" class="font-medium md:text-lg bg-white text-emerald-900 rounded-lg py-2 px-4">Sign Up</a>
+            <a href="" class="font-medium md:text-lg ml-3 md:ml-5">Log In</a>
             {% endif %}
         </div>
     </div>

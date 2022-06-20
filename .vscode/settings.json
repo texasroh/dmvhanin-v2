@@ -23,5 +23,8 @@
             "source.organizeImports": true,
             "python.sortImports": true
         }
+    },
+    "[scss]": {
+        "editor.formatOnSave": false,
     }
 }
