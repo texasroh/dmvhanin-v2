@@ -12,7 +12,7 @@ class LoginView(mixins.LoggedOutOnlyView, FormView):
     form_class = forms.LoginForm
 
 
-class SignUpView(mixins.LoggedInOnlyView, FormView):
+class SignUpView(mixins.LoggedOutOnlyView, FormView):
     template_name = "auth/signup.html"
     form_class = forms.SignUpForm
 
@@ -21,3 +21,23 @@ def log_out(request):
     messages.info(request, f"See you later {request.user.nick_name}")
     logout(request)
     return redirect(reverse("core:home"))
+
+
+def verify(request, secret):
+    pass
+
+
+def google_login(request):
+    pass
+
+
+def google_callback(request):
+    pass
+
+
+def kakao_login(request):
+    pass
+
+
+def kakao_callback(request):
+    pass
