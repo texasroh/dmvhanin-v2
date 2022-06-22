@@ -53,17 +53,17 @@ form {
 @keyframes messageFadeIn {
     0% {
         opacity: 0;
-        transform: translateY(-50px);
+        transform: translateY(0);
     }
 
     5% {
         opacity: 1;
-        transform: translateY(50px);
+        transform: translateY(100px);
     }
 
     95% {
         opacity: 1;
-        transform: translateY(50px);
+        transform: translateY(100px);
     }
 
     100% {
@@ -73,25 +73,29 @@ form {
 
 }
 
-.message {
-    animation: messageFadeIn 5s ease-in-out forwards;
-
-    &.error {
-        @apply bg-red-600;
-    }
-
-    &.info {
-        @apply bg-blue-500;
-    }
-
-    &.success {
-        @apply bg-green-500;
-    }
-
-    &.warning {
-        @apply bg-yellow-400;
+.message-container{
+    top:-60px;
+    .message {
+        animation: messageFadeIn 3s ease-in-out forwards;
+    
+        &.error {
+            @apply bg-red-600;
+        }
+    
+        &.info {
+            @apply bg-blue-500;
+        }
+    
+        &.success {
+            @apply bg-green-500;
+        }
+    
+        &.warning {
+            @apply bg-yellow-400;
+        }
     }
 }
+
 
 
 @tailwind utilities;
