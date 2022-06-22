@@ -2,25 +2,28 @@
 @tailwind components;
 
 body {
-    @apply min-h-screen py-20 relative;
+    @apply min-h-screen py-16 relative;
 }
 
 header {
-    @apply border-b-4 py-3 px-5 fixed top-0 w-full text-white z-40 bg-emerald-900;
+    @apply border-b-4 py-2 px-3 fixed top-0 w-full text-white z-40 bg-emerald-900;
 
     img {
-        @apply w-8 md:w-12;
+        @apply h-12;
+    }
+    .nav-link {
+        @apply text-white font-medium md:text-lg ml-5;
     }
 }
 
 footer {
-    @apply absolute bottom-0 w-full p-5 bg-gray-100;
+    @apply absolute bottom-0 w-full p-3 bg-gray-100;
 }
 
 input,
 textarea,
 select {
-    @apply rounded-sm py-5 font-light text-lg w-full text-left border border-gray-600 px-5;
+    @apply rounded-sm py-2 font-light text-lg w-full text-left border border-gray-600 px-3;
 
     &:focus {
         @apply outline-none border-teal-500;
@@ -44,7 +47,51 @@ form {
 }
 
 .btn {
-    @apply text-center rounded-sm py-5 font-bold text-lg w-full;
+    @apply text-center rounded-sm py-3 font-bold text-lg w-full;
 }
+
+@keyframes messageFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+    5% {
+        opacity: 1;
+        transform: translateY(50px);
+    }
+
+    95% {
+        opacity: 1;
+        transform: translateY(50px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+}
+
+.message {
+    animation: messageFadeIn 5s ease-in-out forwards;
+
+    &.error {
+        @apply bg-red-600;
+    }
+
+    &.info {
+        @apply bg-blue-500;
+    }
+
+    &.success {
+        @apply bg-green-500;
+    }
+
+    &.warning {
+        @apply bg-yellow-400;
+    }
+}
+
 
 @tailwind utilities;

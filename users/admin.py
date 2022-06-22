@@ -17,3 +17,40 @@ class CustomUserAdmin(UserAdmin):
         "email_secret",
         "login_method",
     )
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "username",
+                    "email",
+                    "password",
+                )
+            },
+        ),
+        (
+            "Personal info",
+            {"fields": ("nickname",)},
+        ),
+        (
+            "email verification",
+            {
+                "fields": (
+                    "email_verified",
+                    "email_secret",
+                )
+            },
+        ),
+        (
+            "Permissions",
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                ),
+            },
+        ),
+        ("Important dates", {"fields": ("last_login", "date_joined")}),
+    )

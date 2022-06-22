@@ -13,10 +13,10 @@ class User(AbstractUser, core_models.TimeStampModel):
         (LOGIN_GOOGLE, "Google"),
         (LOGIN_EMAIL, "Email"),
     )
-
+    email = models.EmailField("email address", unique=True)
     nickname = models.CharField(max_length=20, unique=True, null=True, blank=True)
     email_verified = models.BooleanField(default=False)
-    email_secret = models.CharField(max_length=120, default="", blank=True, unique=True)
+    email_secret = models.CharField(max_length=120, null=True, blank=True, unique=True)
     login_method = models.CharField(
         choices=LOGIN_CHOICES, max_length=10, default=LOGIN_EMAIL
     )

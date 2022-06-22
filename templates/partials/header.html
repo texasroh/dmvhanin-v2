@@ -4,13 +4,18 @@
         <div>
             <a href="{% url 'core:home' %}"><img src="{% static 'img/icon.png' %}"></a>
         </div>
-        <div>
+        <ul class="flex">
             {% if user.is_authenticated %}
-            logged in
+                {% if user.is_superuser %}
+                <li><a href="{% url 'admin:index' %}" class="nav-link">Admin Site</a></li>
+                {% else %}
+                <li><a href="" class="md:text-lg">Hello, <b>{{ user.nickname }}</b></a></li>
+                {% endif %}
+                <li><a href="{% url 'users:logout' %}" class="nav-link">Logout</a></li>
             {% else %}
-            <a href="{% url 'users:signup' %}" class="font-medium md:text-lg bg-white text-emerald-900 rounded-lg py-2 px-4">Sign Up</a>
-            <a href="{% url 'users:login' %}" class="font-medium md:text-lg ml-3 md:ml-5">Log In</a>
+            <li><a href="{% url 'users:signup' %}" class="nav-link">Sign Up</a></li>
+            <li><a href="{% url 'users:login' %}" class="nav-link">Log In</a></li>
             {% endif %}
-        </div>
+        </ul>
     </div>
 </header>
