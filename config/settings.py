@@ -140,3 +140,11 @@ AUTH_USER_MODEL = "users.User"
 
 # ADMIN
 ADMIN_URL = os.environ.get("ADMIN_URL", "admin/")
+
+# Email Configuration
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_PORT = os.environ.get("EMAIL_PORT")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_FROM = os.environ.get("EMAIL_FROM")
+EMAIL_USE_TLS = True

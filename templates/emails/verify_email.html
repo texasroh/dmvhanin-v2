@@ -1,0 +1,23 @@
+<h4>DMV한인에 오신것을 환영합니다.</h4>
+<br>
+<p>
+    아래 버튼을 클릭해서 이메일을 인증해주세요.
+</p>
+<div>
+    <a href="{{ domain }}{% url 'users:verify' secret=secret %}" style="padding: 1rem 2rem; border-radius: 5px; background-color: #11aa11; font-size:15px; text-decoration:none; color:white;">이메일 인증</a>
+</div>
+<p>
+    버튼이 클릭이 안되거나 보이지 않을경우 아래 링크를 복사해서 주소창에 붙여넣어주세요.<br>
+    <a href="{{ domain }}{% url 'users:verify' secret=secret %}">{{ domain }}{% url 'users:verify' secret=secret %}</a>
+</p>
+<br>
+<p>
+    이메일 인증을 완료하시면,
+</p>
+<ul>
+    <li>비지니스 등록 및 관리를 하실 수 있습니다.</li>
+    <li>비지니스 프로모션을 기획하실 수 있습니다.</li>
+    <li>비지니스나 게시물에 댓글이 달릴때 알림이 갈 수 있습니다.</li>
+</ul>
+<br>
+<h5>DMV한인은 지역 한인 커뮤니티 활성화에 이바지하겠습니다.</h5>

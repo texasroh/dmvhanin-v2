@@ -14,9 +14,9 @@ class LoginForm(forms.Form):
     #         "password": forms.PasswordInput(attrs={"placeholder": "Password"}),
     #     }
 
-    email = forms.EmailField(widget=forms.EmailInput(attrs={"placeholder": "Email"}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={"placeholder": "이메일"}))
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={"placeholder": "Password"})
+        widget=forms.PasswordInput(attrs={"placeholder": "비밀번호"})
     )
 
     def clean_email(self):
@@ -28,11 +28,11 @@ class LoginForm(forms.Form):
         try:
             user = models.User.objects.get(email=email)
             if user.login_method != "email":
-                raise forms.ValidationError("Login with google or kakao")
+                raise forms.ValidationError("구글이나 카카오로 로그인해주세요.")
             if not user.check_password(password):
-                self.add_error("password", forms.ValidationError("Wrong password"))
+                self.add_error("password", forms.ValidationError("잘못된 비밀번호 입니다."))
         except models.User.DoesNotExist:
-            self.add_error("email", forms.ValidationError("User does not exist"))
+            self.add_error("email", forms.ValidationError("존재하지 않는 계정입니다."))
         return super().clean()
 
 
@@ -41,16 +41,16 @@ class SignUpForm(forms.ModelForm):
         model = models.User
         fields = ("email", "nickname", "password")
         widgets = {
-            "email": forms.EmailInput(attrs={"placeholder": "Email"}),
-            "nickname": forms.TextInput(attrs={"placeholder": "Nickname"}),
-            "password": forms.PasswordInput(attrs={"placeholder": "Password"}),
+            "email": forms.EmailInput(attrs={"placeholder": "이메일"}),
+            "nickname": forms.TextInput(attrs={"placeholder": "닉네임"}),
+            "password": forms.PasswordInput(attrs={"placeholder": "비밀번호"}),
         }
 
     # password = forms.CharField(
     #     widget=forms.PasswordInput(attrs={"placeholder": "Password"})
     # )
     password1 = forms.CharField(
-        widget=forms.PasswordInput(attrs={"placeholder": "Confirm Password"})
+        widget=forms.PasswordInput(attrs={"placeholder": "비밀번호 확인"})
     )
 
     def clean_email(self):
@@ -68,7 +68,7 @@ class SignUpForm(forms.ModelForm):
         if password != password1:
             self.add_error(
                 "password1",
-                forms.ValidationError("Password confirmation does not match"),
+                forms.ValidationError("비밀번호가 일치하지 않습니다."),
             )
         return super().clean()
 
