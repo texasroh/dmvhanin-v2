@@ -30,7 +30,7 @@ class User(AbstractUser, core_models.TimeStampModel):
     )
 
     def verify_email(self):
-        if self.email_verified:
+        if self.email_verified or not self.email:
             return
 
         secret = uuid.uuid4().hex
