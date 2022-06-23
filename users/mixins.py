@@ -1,5 +1,8 @@
+from functools import wraps
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 
@@ -21,3 +24,13 @@ class LoggedInOnlyView(LoginRequiredMixin):
     def handle_no_permission(self):
         messages.error(self.request, "Login required")
         return super().handle_no_permission()
+
+
+def logout_required(func):
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            raise Http404()
+        return func(request, *args, **kwargs)
+
+    return wrapper

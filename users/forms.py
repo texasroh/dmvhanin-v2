@@ -27,8 +27,8 @@ class LoginForm(forms.Form):
         password = self.cleaned_data.get("password")
         try:
             user = models.User.objects.get(email=email)
-            if user.login_method != "email":
-                raise forms.ValidationError("구글이나 카카오로 로그인해주세요.")
+            if user.login_method != models.User.LOGIN_EMAIL:
+                raise forms.ValidationError(f"{user.login_method}로 로그인해주세요.")
             if not user.check_password(password):
                 self.add_error("password", forms.ValidationError("잘못된 비밀번호 입니다."))
         except models.User.DoesNotExist:
