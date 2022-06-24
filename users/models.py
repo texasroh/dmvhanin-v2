@@ -1,5 +1,4 @@
 import os
-import uuid
 
 from core import models as core_models
 from django.conf import settings
@@ -8,32 +7,24 @@ from django.core.mail import send_mail
 from django.db import models
 from django.shortcuts import render
 from django.template.loader import render_to_string
+from django.utils.crypto import get_random_string
 from django.utils.html import strip_tags
 
 
 class User(AbstractUser, core_models.TimeStampModel):
 
-    LOGIN_KAKAO = "kakao"
-    LOGIN_GOOGLE = "google"
-    LOGIN_EMAIL = "email"
-    LOGIN_CHOICES = (
-        (LOGIN_KAKAO, "Kakao"),
-        (LOGIN_GOOGLE, "Google"),
-        (LOGIN_EMAIL, "Email"),
-    )
-    email = models.EmailField("email address", unique=True, null=True, blank=True)
-    nickname = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    email = models.EmailField("email address", unique=True, null=True)
+    nickname = models.CharField(max_length=50, unique=True, null=True)
     email_verified = models.BooleanField(default=False)
-    email_secret = models.CharField(max_length=120, null=True, blank=True, unique=True)
-    login_method = models.CharField(
-        choices=LOGIN_CHOICES, max_length=10, default=LOGIN_EMAIL
-    )
+    email_secret = models.CharField(max_length=120, null=True, unique=True)
+    google_id = models.CharField(max_length=100, null=True, unique=True)
+    kakao_id = models.CharField(max_length=100, null=True, unique=True)
 
     def verify_email(self):
         if self.email_verified or not self.email:
             return
 
-        secret = uuid.uuid4().hex
+        secret = get_random_string(32)
         self.email_secret = secret
         html_message = render_to_string(
             "emails/verify_email.html",

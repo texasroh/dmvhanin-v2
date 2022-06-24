@@ -1,5 +1,5 @@
 <div class="grid grid-rows-2 md:grid-rows-1 md:grid-cols-2 gap-2 w-full">
-    <a href="" class="btn text-gray-50 bg-red-500 flex items-center justify-center rounded-full">
+    <a href="{% url 'users:google-login' %}" class="btn text-gray-50 bg-red-500 flex items-center justify-center rounded-full">
         <i class="fa-brands fa-google mr-2 font-bold rounded-full text-red-600 bg-gray-50 p-2"></i> 구글 로그인
     </a>
     <a href="{% url 'users:kakao-login' %}" class="btn text-yellow-800 bg-yellow-300 flex items-center justify-center rounded-full">

@@ -44,6 +44,10 @@ class SignUpView(mixins.LoggedOutOnlyView, FormView):
         return super().form_valid(form)
 
 
+def profile(request):
+    return redirect(reverse("core:home"))
+
+
 def log_out(request):
     messages.info(request, "다음에 또 봐요.")
     logout(request)
@@ -64,11 +68,70 @@ def complete_verification(request, secret):
 
 
 def google_login(request):
+    CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
+    REDIRECT_URI = os.environ.get("DOMAIN") + reverse("users:google-callback")
+    return redirect(
+        f"https://accounts.google.com/o/oauth2/v2/auth?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
+    )
+
+
+class GoogleException(Exception):
     pass
 
 
 def google_callback(request):
-    pass
+    try:
+        if "error" in request.GET:
+            raise GoogleException("에러 발생")
+            # messages.error('에러 발생')
+            # return redirect(reverse('core:home'))
+        code = request.GET.get("code")
+        client_id = os.environ.get("GOOGLE_CLIENT_ID")
+        client_secret = os.environ.get("GOOGLE_CLIENT_SECRET")
+        redirect_uri = os.environ.get("DOMAIN") + reverse("users:google-callback")
+        token_request = requests.post(
+            f"https://oauth2.googleapis.com/token?client_id={client_id}&client_secret={client_secret}&code={code}&grant_type=authorization_code&redirect_uri={redirect_uri}",
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+        )
+        token_json = token_request.json()
+        if "error" in token_json:
+            raise GoogleException("에러 발생")
+        access_token = token_json.get("access_token")
+        profile_request = requests.get(
+            "https://www.googleapis.com/oauth2/v2/userinfo",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        profile_json = profile_request.json()
+        id = profile_json.get("id")
+        email = profile_json.get("email")
+        try:
+            user = models.User.objects.get(google_id=id)
+        except models.User.DoesNotExist:
+            try:
+                user = models.User.objects.get(email=email)
+                user.google_id = id
+                user.email_verified = True
+                user.email_secret = None
+                user.save()
+            except models.User.DoesNotExist:
+                user = models.User(
+                    username=email, email=email, google_id=id, email_verified=True
+                )
+                user.save()
+                login(request, user)
+                messages.success(request, "환영합니다.")
+                messages.info(request, "닉네임을 설정해주세요")
+                return redirect(reverse("users:profile"))
+
+        login(request, user)
+        messages.success(
+            request, f"{user.nickname if user.nickname else user.email}님 안녕하세요."
+        )
+        return redirect(reverse("core:home"))
+
+    except GoogleException as e:
+        messages.error(request, e)
+        return redirect(reverse("users:login"))
 
 
 @mixins.logout_required
