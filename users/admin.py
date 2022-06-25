@@ -7,9 +7,8 @@ from . import models
 @admin.register(models.User)
 class CustomUserAdmin(UserAdmin):
     list_display = (
-        "username",
-        "nickname",
         "email",
+        "nickname",
         "is_active",
         "is_staff",
         "is_superuser",
@@ -23,7 +22,6 @@ class CustomUserAdmin(UserAdmin):
             None,
             {
                 "fields": (
-                    "username",
                     "email",
                     "password",
                 )
@@ -53,4 +51,21 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
         ("Important dates", {"fields": ("last_login", "date_joined")}),
+    )
+
+    search_fields = ("email", "nickname")
+    ordering = (
+        "-is_superuser",
+        "-is_staff",
+        "email",
+    )
+
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("email", "password1", "password2"),
+            },
+        ),
     )

@@ -18,7 +18,7 @@ class LoginView(mixins.LoggedOutOnlyView, FormView):
     def form_valid(self, form):
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
-        user = authenticate(self.request, username=email, password=password)
+        user = authenticate(self.request, email=email, password=password)
         if user:
             login(self.request, user)
             messages.success(self.request, f"{user.nickname}님 안녕하세요.")
@@ -35,7 +35,7 @@ class SignUpView(mixins.LoggedOutOnlyView, FormView):
         form.save()
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
-        user = authenticate(self.request, username=email, password=password)
+        user = authenticate(self.request, email=email, password=password)
         if user:
             login(self.request, user)
             messages.success(self.request, f"{user.nickname}님 환영합니다.")
