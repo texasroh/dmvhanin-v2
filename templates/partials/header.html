@@ -12,7 +12,13 @@
                     {% if user.is_superuser %}
                     <li><a href="{% url 'admin:index' %}" class="nav-link">Admin Site</a></li>
                     {% else %}
-                    <li><a href="" class="md:text-lg"><b>{{ user.nickname }}</b>님</a></li>
+                    <li><a href="" class="nav-link">
+                        {% if user.nickname %}
+                        <b>{{ user.nickname }}</b>님
+                        {% else %}
+                        닉네임 설정
+                        {% endif %}
+                    </a></li>
                     {% endif %}
                     <li><a href="{% url 'users:logout' %}" class="nav-link">로그아웃</a></li>
                 {% else %}

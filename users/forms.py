@@ -44,9 +44,6 @@ class SignUpForm(forms.ModelForm):
             "password": forms.PasswordInput(attrs={"placeholder": "비밀번호"}),
         }
 
-    # password = forms.CharField(
-    #     widget=forms.PasswordInput(attrs={"placeholder": "Password"})
-    # )
     password1 = forms.CharField(
         widget=forms.PasswordInput(attrs={"placeholder": "비밀번호 확인"})
     )
@@ -56,7 +53,6 @@ class SignUpForm(forms.ModelForm):
 
     def clean(self):
         password = self.cleaned_data.get("password")
-        # validate_password(password)
         try:
             validate_password(password)
         except PWValidationError as errors:
@@ -71,7 +67,11 @@ class SignUpForm(forms.ModelForm):
         return super().clean()
 
     def save(self, *args, **kwargs):
+        email = self.cleaned_data.get("email")
         password = self.cleaned_data.get("password")
-        user = super().save(commit=False)
-        user.set_password(password)
-        user.save()
+        nickname = self.cleaned_data.get("nickname")
+        user = models.User.objects.create_user(email, password, nickname=nickname)
+        return user
+        # user = super().save(commit=False)
+        # user.set_password(password)
+        # user.save()

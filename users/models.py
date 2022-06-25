@@ -4,7 +4,7 @@ from core import models as core_models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.mail import send_mail
-from django.db import models
+from django.db import IntegrityError, models
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
@@ -23,7 +23,8 @@ class UserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError("The given email must be set")
-        email = self.normalize_email(email)
+        # email = self.normalize_email(email)
+        email = email.lower()
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -63,11 +64,17 @@ class User(AbstractUser, core_models.TimeStampModel):
     objects = UserManager()
 
     def verify_email(self):
-        if self.email_verified or not self.email:
+        if self.email_verified:
             return
 
-        secret = get_random_string(32)
-        self.email_secret = secret
+        while True:
+            try:
+                secret = get_random_string(32)
+                self.email_secret = secret
+                self.save()
+                break
+            except IntegrityError:
+                print("Integrity Error June")
         html_message = render_to_string(
             "emails/verify_email.html",
             {
@@ -83,4 +90,3 @@ class User(AbstractUser, core_models.TimeStampModel):
             fail_silently=False,
             html_message=html_message,
         )
-        self.save()

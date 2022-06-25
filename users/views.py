@@ -32,10 +32,10 @@ class SignUpView(mixins.LoggedOutOnlyView, FormView):
     success_url = reverse_lazy("core:home")
 
     def form_valid(self, form):
-        form.save()
-        email = form.cleaned_data.get("email")
-        password = form.cleaned_data.get("password")
-        user = authenticate(self.request, email=email, password=password)
+        user = form.save()
+        # email = form.cleaned_data.get("email")
+        # password = form.cleaned_data.get("password")
+        # user = authenticate(self.request, email=email, password=password)
         if user:
             login(self.request, user)
             messages.success(self.request, f"{user.nickname}님 환영합니다.")
@@ -60,11 +60,12 @@ def complete_verification(request, secret):
         user.email_verified = True
         user.email_secret = None
         user.save()
-        messages.success(request, "이메일 인증 완료. 로그인 해주세요.")
+        login(request, user)
+        messages.success(request, "이메일 인증 완료.")
     except models.User.DoesNotExist:
         messages.error(request, "이메일 인증 실패")
 
-    return redirect(reverse("core:home"))
+    return redirect(reverse("users:profile"))
 
 
 def google_login(request):
@@ -114,21 +115,20 @@ def google_callback(request):
                 user.email_secret = None
                 user.save()
             except models.User.DoesNotExist:
-                user = models.User(
-                    username=email, email=email, google_id=id, email_verified=True
+                # user = models.User(
+                #     username=email, email=email, google_id=id, email_verified=True
+                # )
+                # user.save()
+                user = models.User.objects.create_user(
+                    email, None, google_id=id, email_verified=True
                 )
-                user.save()
-                login(request, user)
-                messages.success(request, "환영합니다.")
-                messages.info(request, "닉네임을 설정해주세요")
-                return redirect(reverse("users:profile"))
 
         login(request, user)
-        messages.success(
-            request, f"{user.nickname if user.nickname else user.email}님 안녕하세요."
-        )
-        return redirect(reverse("core:home"))
-
+        if user.nickname:
+            messages.success(request, f"{user.nickname}님 안녕하세요.")
+            return redirect(reverse("core:home"))
+        messages.info(request, "닉네임을 설정해주세요")
+        return redirect(reverse("users:profile"))
     except GoogleException as e:
         messages.error(request, e)
         return redirect(reverse("users:login"))
@@ -168,25 +168,34 @@ def kakao_callback(request):
             },
         )
         profile_json = profile_request.json()
-        id = f"{models.User.LOGIN_KAKAO}_{profile_json.get('id')}"
-
+        id = profile_json.get("id")
         try:
-            user = models.User.objects.get(username=id)
+            user = models.User.objects.get(kakao_id=id)
         except models.User.DoesNotExist:
             email = profile_json.get("kakao_account").get("email")
-            nickname = profile_json.get("properties").get("nickname")
-            user = models.User(
-                username=id,
-                email=email,
-                nickname=nickname,
-                login_method=models.User.LOGIN_KAKAO,
-                email_verified=True if email else False,
-            )
-            user.set_unusable_password()
-            user.save()
+            if email:
+                try:
+                    user = models.User.objects.get(email=email)
+                    user.kakao_id = id
+                    user.email_verified = True
+                    user.email_secret = None
+                    user.save()
+                except models.User.DoesNotExist:
+                    user = models.User.objects.create_user(
+                        email,
+                        None,
+                        kakao_id=id,
+                        email_verified=True,
+                    )
+            else:
+                user = models.User.objects.create_user(str(id), None, kakao_id=id)
+
         login(request, user)
-        messages.success(request, f"{user.nickname}님 안녕하세요.")
-        return redirect(reverse("core:home"))
+        if user.nickname:
+            messages.success(request, f"{user.nickname}님 안녕하세요.")
+            return redirect(reverse("core:home"))
+        messages.info(request, "닉네임을 설정해주세요")
+        return redirect(reverse("users:profile"))
     except KakaoException as e:
         messages.error(request, e)
         return redirect(reverse("users:login"))
