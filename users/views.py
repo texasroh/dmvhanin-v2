@@ -3,6 +3,7 @@ import os
 import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.db import IntegrityError
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
@@ -104,10 +105,10 @@ def google_callback(request):
         )
         profile_json = profile_request.json()
         id = profile_json.get("id")
-        email = profile_json.get("email")
         try:
             user = models.User.objects.get(google_id=id)
         except models.User.DoesNotExist:
+            email = profile_json.get("email")
             try:
                 user = models.User.objects.get(email=email)
                 user.google_id = id
@@ -115,13 +116,15 @@ def google_callback(request):
                 user.email_secret = None
                 user.save()
             except models.User.DoesNotExist:
-                # user = models.User(
-                #     username=email, email=email, google_id=id, email_verified=True
-                # )
-                # user.save()
                 user = models.User.objects.create_user(
                     email, None, google_id=id, email_verified=True
                 )
+            nickname = profile_json.get("name")
+            try:
+                user.nickname = nickname
+                user.save()
+            except IntegrityError:
+                user.nickname = None
 
         login(request, user)
         if user.nickname:
@@ -139,7 +142,7 @@ def kakao_login(request):
     REST_API_KEY = os.environ.get("KAKAO_REST_API_KEY")
     REDIRECT_URI = os.environ.get("DOMAIN") + reverse("users:kakao-callback")
     return redirect(
-        f"https://kauth.kakao.com/oauth/authorize?client_id={REST_API_KEY}&redirect_uri={REDIRECT_URI}&response_type=code"
+        f"https://kauth.kakao.com/oauth/authorize?client_id={REST_API_KEY}&redirect_uri={REDIRECT_URI}&response_type=code&scope=account_email"
     )
 
 
@@ -189,6 +192,13 @@ def kakao_callback(request):
                     )
             else:
                 user = models.User.objects.create_user(str(id), None, kakao_id=id)
+
+            try:
+                nickname = profile_json.get("properties").get("nickname")
+                user.nickname = nickname
+                user.save()
+            except IntegrityError:
+                user.nickname = None
 
         login(request, user)
         if user.nickname:
