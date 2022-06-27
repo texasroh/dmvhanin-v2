@@ -5,7 +5,15 @@ from . import models
 
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("category", "subcategory")
+    list_display = ("name", "slug")
+
+
+@admin.register(models.SubCategory)
+class SubCategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug", "get_category")
+
+    def get_category(self, obj):
+        return obj.category.name
 
 
 class PhotoInline(admin.TabularInline):

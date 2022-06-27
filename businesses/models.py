@@ -5,15 +5,29 @@ from django.db import models
 
 
 class Category(core_models.TimeStampModel):
-    category = models.CharField(max_length=50)
-    subcategory = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
+    slug = models.CharField(max_length=50, unique=True)
 
     class Meta:
         verbose_name_plural = "Categories"
-        unique_together = ("category", "subcategory")
 
     def __str__(self):
-        return f"{self.category} - {self.subcategory}"
+        return f"{self.name}"
+
+
+class SubCategory(core_models.TimeStampModel):
+    name = models.CharField(max_length=50)
+    slug = models.CharField(max_length=50)
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="subcategories"
+    )
+
+    class Meta:
+        verbose_name_plural = "Sub categories"
+        unique_together = (("category", "slug"), ("category", "name"))
+
+    def __str__(self):
+        return f"{self.name}"
 
 
 def zipcode_validator(zipcode):
@@ -47,6 +61,7 @@ class Business(core_models.TimeStampModel):
 
     name_kor = models.CharField(max_length=50)
     name_eng = models.CharField(max_length=50)
+    slug = models.CharField(max_length=50)
 
     business_type = models.CharField(
         choices=BUSINESS_TYPE_CHOICES, max_length=20, default=BUSINESS_TYPE_OFFLINE
@@ -62,8 +77,8 @@ class Business(core_models.TimeStampModel):
 
     description = models.TextField()
     website = models.CharField(max_length=100, null=True, blank=True)
-    category = models.ForeignKey(
-        Category, related_name="businesses", on_delete=models.CASCADE
+    subcategory = models.ForeignKey(
+        SubCategory, related_name="businesses", on_delete=models.CASCADE
     )
     user = models.ForeignKey(
         "users.User", related_name="businesses", on_delete=models.CASCADE
