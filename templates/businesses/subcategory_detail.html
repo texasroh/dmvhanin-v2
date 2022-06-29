@@ -6,7 +6,7 @@
 
 <ul>
 {% for business in subcategory.businesses.all %}
-{{ business }}
+<a href="{% url 'businesses:business' subcategory.category.slug subcategory.slug business.slug %}">{{ business.name_kor }}</a>
 {% empty %}
 No businesses
 {% endfor %}

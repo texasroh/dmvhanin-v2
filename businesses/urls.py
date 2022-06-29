@@ -12,4 +12,9 @@ urlpatterns = [
         views.SubCategoryDetailView.as_view(),
         name="subcategory",
     ),
+    path(
+        "<str:cat_slug>/<str:sub_slug>/<str:biz_slug>",
+        views.BusinessDetailView.as_view(),
+        name="business",
+    ),
 ]

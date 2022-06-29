@@ -2,7 +2,7 @@
 @tailwind components;
 
 body {
-    @apply min-h-screen py-16 relative;
+    @apply min-h-screen py-16 relative text-gray-600;
 }
 
 header {
@@ -43,6 +43,12 @@ form {
                 }
             }
         }
+    }
+}
+
+a{
+    &:hover{
+        @apply text-teal-500;
     }
 }
 

@@ -21,3 +21,15 @@ class SubCategoryDetailView(View):
         return render(
             request, "businesses/subcategory_detail.html", {"subcategory": subcategory}
         )
+
+
+class BusinessDetailView(View):
+    def get(self, request, cat_slug, sub_slug, biz_slug):
+        business = models.Business.objects.get(
+            slug=biz_slug,
+            subcategory__slug=sub_slug,
+            subcategory__category__slug=cat_slug,
+        )
+        return render(
+            request, "businesses/business_detail.html", {"business": business}
+        )
