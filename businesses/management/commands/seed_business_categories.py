@@ -66,7 +66,7 @@ class Command(BaseCommand):
                 {"name": "신학대학", "slug": "seminary"},
                 {"name": "일반대학", "slug": "university"},
                 {"name": "한글학교", "slug": "korean"},
-                {"name": "꽃꽃이학원", "slug": "florist"},
+                {"name": "꽃꽂이학원", "slug": "florist"},
                 {"name": "영어학원", "slug": "english"},
                 {"name": "예능학원", "slug": "entertainment"},
                 {"name": "운전학원", "slug": "driving"},
@@ -144,7 +144,7 @@ class Command(BaseCommand):
             "slug": "convenience",
             "subcategories": [
                 {"name": "운송/이삿짐", "slug": "moving"},
-                {"name": "노래방/당구장/PC방/민화방/기원", "slug": "entertainment"},
+                {"name": "노래방/당구장/PC방/만화방/기원", "slug": "entertainment"},
                 {"name": "스파/지압", "slug": "spa-acupressure"},
                 {"name": "보청기", "slug": "hearing"},
                 {"name": "인터넷서비스", "slug": "Internet"},
@@ -239,3 +239,5 @@ class Command(BaseCommand):
                 #     name=subcategory["name"], slug=subcategory["slug"], category=cat
                 # )
                 # sub.save()
+
+        self.stdout.write(self.style.SUCCESS("Categories created!"))

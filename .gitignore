@@ -131,3 +131,4 @@ dmypy.json
 
 # Custom
 node_modules/
+*.csv

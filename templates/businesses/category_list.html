@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}한인업소록{% endblock %}
+
+{% block content %}
+
+    {% for category in categories %}
+        <div><a href="{% url 'businesses:category' category.slug %}">{{ category.name }}</a></div>
+        <ul class="flex">
+            {% for subcategory in category.subcategories.all %}
+            <li>{{ subcategory.name }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+
+{% endblock %}

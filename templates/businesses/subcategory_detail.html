@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ subcategory.name }}{% endblock %}
+
+{% block content %}
+
+<ul>
+{% for business in subcategory.businesses.all %}
+{{ business }}
+{% empty %}
+No businesses
+{% endfor %}
+</ul>
+
+{% endblock %}

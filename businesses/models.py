@@ -61,27 +61,28 @@ class Business(core_models.TimeStampModel):
 
     name_kor = models.CharField(max_length=50)
     name_eng = models.CharField(max_length=50)
-    slug = models.CharField(max_length=50)
+    slug = models.CharField(max_length=50, unique=True)
 
     business_type = models.CharField(
         choices=BUSINESS_TYPE_CHOICES, max_length=20, default=BUSINESS_TYPE_OFFLINE
     )
+    description = models.TextField()
 
     address = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     state = models.CharField(choices=STATE_CHOICES, max_length=3)
     zipcode = models.CharField(max_length=5, validators=[zipcode_validator])
     phone_number = models.CharField(max_length=15, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    website = models.CharField(max_length=100, null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
 
-    description = models.TextField()
-    website = models.CharField(max_length=100, null=True, blank=True)
     subcategory = models.ForeignKey(
         SubCategory, related_name="businesses", on_delete=models.CASCADE
     )
     user = models.ForeignKey(
-        "users.User", related_name="businesses", on_delete=models.CASCADE
+        "users.User", related_name="businesses", on_delete=models.CASCADE, null=True
     )
 
     class Meta:
