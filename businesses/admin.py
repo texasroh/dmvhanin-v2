@@ -23,3 +23,8 @@ class PhotoInline(admin.TabularInline):
 @admin.register(models.Business)
 class BusinessAdmin(admin.ModelAdmin):
     inlines = (PhotoInline,)
+
+
+@admin.register(models.Review, models.ReplayReview)
+class ReviewAdmin(admin.ModelAdmin):
+    pass

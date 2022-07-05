@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    <div class="flex">
+        <div class="grow">
+            {% block sub_content %}{% endblock %}
+        </div>
+        <div class="basis-1/4 border-l-4 border-gray-200 px-4">
+            {% for category in categories %}
+                <div class="category">
+                    <h3 class="font-bold text-md flex justify-between">
+                        <span class="name">{{ category.name }}</span>
+                        <span class="arrow"><i class="fa-solid fa-angle-down"></i></span>
+                    </h3>
+                    <ul class="my-1.5 max-h-0 overflow-hidden bg-gray-50 px-4">
+                    {% for subcategory in category.subcategories.all %}
+                        <li class="my-1"><a href="{% url 'businesses:subcategory' category.slug subcategory.slug %}">{{ subcategory.name }}</a></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            document.querySelectorAll('.category h3').forEach((cat) => {
+                cat.addEventListener('click', (e) => {
+                    const ele = e.target.closest('.category');
+                    const ul = ele.querySelector('ul');
+                    console.log(ul.scrollHeight);
+                    document.querySelectorAll('.category').forEach((c) => {
+                        if (c !== ele){
+                            c.classList.remove('show');
+                            c.querySelector('ul').style.maxHeight = 0;
+                        }
+                    });
+                    ele.classList.toggle('show');
+                    if (ele.classList.contains('show')){
+                        ul.style.maxHeight = ul.scrollHeight + 10 +'px';
+                    } else {
+                        ul.style.maxHeight = 0;
+                    }
+                });
+            });
+        })();
+    </script>
+{% endblock %}

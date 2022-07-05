@@ -1,0 +1,8 @@
+<div class="rounded-lg shadow shadow-gray-500 overflow-hidden">
+    <div class="category text-lg font-bold py-2 px-4 bg-yellow-100">{{ category.name }}</div>
+    <ul class="subcategory-list flex flex-wrap p-4">
+        {% for subcategory in category.subcategories.all %}
+        <li class="subcategory font-medium py-px my-1 px-4 border-l-2 border-gray-500"><a href="{% url 'businesses:subcategory' category.slug subcategory.slug %}">{{ subcategory.name }}</a></li>
+        {% endfor %}
+    </ul>
+</div>

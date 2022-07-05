@@ -1,15 +1,20 @@
-{% extends 'base.html' %}
+{% extends 'mixins/businesses/business_base.html' %}
 
 {% block title %}{{ subcategory.name }}{% endblock %}
 
-{% block content %}
+{% block sub_content %}
 
-<ul>
+<h1 class="text-lg font-bold">{{ subcategory.category.name }} {{ subcategory.name }}</h1>
+
+<div class="grid grid-cols-2">
 {% for business in subcategory.businesses.all %}
-<a href="{% url 'businesses:business' subcategory.category.slug subcategory.slug business.slug %}">{{ business.name_kor }}</a>
-{% empty %}
-No businesses
+    <a href="{% url 'businesses:business' subcategory.category.slug subcategory.slug business.slug %}">
+        <div>
+            {{ business.name_kor }}
+            {{ business.name_eng }}
+        </div>
+    </a>
 {% endfor %}
-</ul>
+</div>
 
 {% endblock %}

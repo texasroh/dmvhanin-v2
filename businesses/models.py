@@ -82,7 +82,7 @@ class Business(core_models.TimeStampModel):
         SubCategory, related_name="businesses", on_delete=models.CASCADE
     )
     user = models.ForeignKey(
-        "users.User", related_name="businesses", on_delete=models.CASCADE, null=True
+        "users.User", related_name="businesses", on_delete=models.SET_NULL, null=True
     )
 
     class Meta:
@@ -97,9 +97,21 @@ class Photo(core_models.TimeStampModel):
 
 
 class Review(core_models.TimeStampModel):
-    created_by = models.ForeignKey(
-        "users.User", related_name="business_reviews", on_delete=models.CASCADE
-    )
     rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
+    review = models.TextField()
+    user = models.ForeignKey(
+        "users.User", related_name="business_reviews", on_delete=models.CASCADE
+    )
+    business = models.ForeignKey(
+        Business, on_delete=models.CASCADE, related_name="reviews"
+    )
+
+
+class ReplayReview(core_models.TimeStampModel):
+    replay = models.TextField()
+    user = models.ForeignKey(
+        "users.User", on_delete=models.CASCADE, related_name="replies"
+    )
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="replies")
