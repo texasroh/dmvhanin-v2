@@ -4,19 +4,19 @@
 {% block content %}
 
     <div class="flex">
-        <div class="grow">
+        <div class="grow pr-4">
             {% block sub_content %}{% endblock %}
         </div>
-        <div class="basis-1/4 border-l-4 border-gray-200 px-4">
+        <div class="basis-1/4 border-l-4 border-gray-200 pl-4">
             {% for category in categories %}
                 <div class="category">
-                    <h3 class="font-bold text-md flex justify-between">
+                    <h3 class="font-bold text-md flex justify-between cursor-pointer">
                         <span class="name">{{ category.name }}</span>
                         <span class="arrow"><i class="fa-solid fa-angle-down"></i></span>
                     </h3>
-                    <ul class="my-1.5 max-h-0 overflow-hidden bg-gray-50 px-4">
+                    <ul class="my-1.5 max-h-0 overflow-hidden  px-4">
                     {% for subcategory in category.subcategories.all %}
-                        <li class="my-1"><a href="{% url 'businesses:subcategory' category.slug subcategory.slug %}">{{ subcategory.name }}</a></li>
+                        <li class="my-1 font-bold text-gray-400"><a href="{% url 'businesses:subcategory' category.slug subcategory.slug %}">{{ subcategory.name }}</a></li>
                     {% endfor %}
                     </ul>
                 </div>

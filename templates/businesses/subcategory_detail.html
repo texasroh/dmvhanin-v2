@@ -1,19 +1,60 @@
 {% extends 'mixins/businesses/business_base.html' %}
+{% load phone star %}
 
 {% block title %}{{ subcategory.name }}{% endblock %}
 
 {% block sub_content %}
 
-<h1 class="text-lg font-bold">{{ subcategory.category.name }} {{ subcategory.name }}</h1>
+<h1 class="text-lg font-bold mb-4">{{ subcategory.category.name }} {{ subcategory.name }}</h1>
 
-<div class="grid grid-cols-2">
+<div class="grid grid-cols-2 gap-3">
 {% for business in subcategory.businesses.all %}
-    <a href="{% url 'businesses:business' subcategory.category.slug subcategory.slug business.slug %}">
-        <div>
-            {{ business.name_kor }}
-            {{ business.name_eng }}
+    <div class="p-5 shadow rounded">
+        <a href="{% url 'businesses:business' subcategory.category.slug subcategory.slug business.slug %}">
+            <div class="font-bold text-md">{{ business.name_kor }}</div>
+            <div class="font-medium text-sm">{{ business.name_eng }}</div>
+        </a>
+
+        <div class="flex items-center mt-2">
+            <i class="fa-solid fa-location-dot"></i>
+            <div class="ml-2">
+                {{ business.address }} {{ business.city }}, {{ business.state }} {{ business.zipcode }}
+            </div>
         </div>
-    </a>
+        <div class="flex items-center">
+            <i class="fa-solid fa-phone"></i>
+            <div class="ml-2">
+                {{ business.phone_number|phone }}
+            </div>
+        </div>
+        <hr class="my-2">
+        <a href="{% url 'businesses:business' subcategory.category.slug subcategory.slug business.slug %}">
+            <div class="flex justify-between font-medium">
+                <div class="text-green-600">
+                    {% if business.average_rating %}
+                        {% with business.average_rating|full_star as range %}
+                        {% for _ in range %}
+                        <i class="fa-solid fa-star"></i>
+                        {% endfor %}
+                        {% endwith %}
+
+                        {% if business.average_rating|has_half_star %}
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        {% endif %}
+
+                        {% with business.average_rating|empty_star as range %}
+                        {% for _ in range %}
+                        <i class="fa-regular fa-star"></i>
+                        {% endfor %}
+                        {% endwith %}
+                    {% endif %}
+                </div>
+                <div>
+                    {{ business.total_review_count }} Reviews
+                </div>
+            </div>
+        </a>
+    </div>
 {% endfor %}
 </div>
 

@@ -88,6 +88,22 @@ class Business(core_models.TimeStampModel):
     class Meta:
         verbose_name_plural = "Businesses"
 
+    def average_rating(self):
+        total_rating = 0
+        reviews = self.reviews.all()
+        if not reviews:
+            return 0
+        for review in reviews:
+            total_rating += review.rating
+        return total_rating / len(reviews)
+
+    def total_review_count(self):
+        cnt = 0
+        for review in self.reviews.all():
+            cnt += review.replies.count() + 1
+
+        return cnt
+
 
 class Photo(core_models.TimeStampModel):
     file = models.ImageField(upload_to="business_photos")
