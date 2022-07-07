@@ -39,9 +39,12 @@ class BusinessDetailView(View):
                 subcategory__slug=sub_slug,
                 subcategory__category__slug=cat_slug,
             )
+            categories = models.Category.objects.all()
         except models.Business.DoesNotExist:
             raise Http404()
 
         return render(
-            request, "businesses/business_detail.html", {"business": business}
+            request,
+            "businesses/business_detail.html",
+            {"business": business, "categories": categories},
         )

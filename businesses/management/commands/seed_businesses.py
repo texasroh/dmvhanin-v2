@@ -24,7 +24,7 @@ class Command(BaseCommand):
                         address=row["address"],
                         city=row["city"],
                         state=row["state"],
-                        zipcode=row["zipcode"],
+                        zipcode=int(row["zipcode"]),
                         phone_number=row["phone_number"],
                         email=row["email"],
                         website=row["website"],

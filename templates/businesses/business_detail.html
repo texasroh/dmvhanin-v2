@@ -1,9 +1,11 @@
-{% extends 'base.html' %}
+{% extends 'mixins/businesses/business_base.html' %}
+{% load phone star %}
 
 {% block title %}{{ business.name_kor }}{% endblock %}
 
-{% block content %}
+{% block sub_content %}
 
-{{ business.name_kor }}
+<h1 class="font-bold text-lg">{{ business.name_kor }}</h1>
+<h2 class="font-medium text-md">{{ business.name_eng }}</h2>
 
 {% endblock %}

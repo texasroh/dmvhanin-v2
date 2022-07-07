@@ -7,7 +7,7 @@
         <div class="grow pr-4">
             {% block sub_content %}{% endblock %}
         </div>
-        <div class="basis-1/4 border-l-4 border-gray-200 pl-4">
+        <div class="hidden lg:block pl-4 border-r-0 basis-1/4 border-l-4 border-gray-200">
             {% for category in categories %}
                 <div class="category">
                     <h3 class="font-bold text-md flex justify-between cursor-pointer">
@@ -22,6 +22,9 @@
                 </div>
             {% endfor %}
         </div>
+        <div class="fixed left-0 top-1/2 lg:hidden z-10">
+            <a href="{% url 'businesses:categories' %}" class="rounded-r-lg bg-green-300 font-bold text-sm py-8 px-1"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+        </div>
     </div>
 
     <script>
@@ -30,7 +33,6 @@
                 cat.addEventListener('click', (e) => {
                     const ele = e.target.closest('.category');
                     const ul = ele.querySelector('ul');
-                    console.log(ul.scrollHeight);
                     document.querySelectorAll('.category').forEach((c) => {
                         if (c !== ele){
                             c.classList.remove('show');
@@ -44,6 +46,12 @@
                         ul.style.maxHeight = 0;
                     }
                 });
+            });
+
+            const category_container = document.querySelector('.category-container');
+            window.addEventListener('scroll', () => {
+                console.log(document.scrollTop);
+                //category_container.style.marginTop = -this.scrollTop;
             });
         })();
     </script>
