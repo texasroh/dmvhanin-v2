@@ -1,5 +1,5 @@
 {% extends 'mixins/businesses/business_base.html' %}
-{% load phone star %}
+{% load phone star queryset %}
 
 {% block title %}{{ business.name_kor }}{% endblock %}
 
@@ -8,4 +8,21 @@
 <h1 class="font-bold text-lg">{{ business.name_kor }}</h1>
 <h2 class="font-medium text-md">{{ business.name_eng }}</h2>
 
+
+<hr class="my-4">
+<form method="post">
+    {% csrf_token %}
+    <div class="grid grid-cols-2 gap-4">
+        {{ review_form.as_p }}
+    </div>
+    <button>Save</button>
+</form>
+{% for review in business.reviews.all|order_by:'pk' %}
+
+{% endfor %}
+
+
+<div class="fixed left-0 top-1/2 lg:hidden z-10">
+    <a href="{% url 'businesses:subcategory' business.subcategory.category.slug business.subcategory.slug %}" class="rounded-r-lg bg-green-300 font-bold text-sm py-8 px-1"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+</div>
 {% endblock %}

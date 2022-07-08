@@ -1,8 +1,8 @@
 from django.http import Http404
 from django.shortcuts import render
-from django.views.generic import DetailView, ListView, View
+from django.views.generic import DetailView, FormView, ListView, View
 
-from . import models
+from . import forms, models
 
 
 class CategoryListView(ListView):
@@ -27,7 +27,10 @@ class SubCategoryDetailView(View):
         return render(
             request,
             "businesses/subcategory_detail.html",
-            {"categories": categories, "subcategory": subcategory},
+            {
+                "categories": categories,
+                "subcategory": subcategory,
+            },
         )
 
 
@@ -43,8 +46,17 @@ class BusinessDetailView(View):
         except models.Business.DoesNotExist:
             raise Http404()
 
+        review_form = forms.CreateReviewForm()
+
         return render(
             request,
             "businesses/business_detail.html",
-            {"business": business, "categories": categories},
+            {
+                "business": business,
+                "categories": categories,
+                "review_form": review_form,
+            },
         )
+
+    def post(self, request, cat_slug, sub_slug, biz_slug):
+        pass

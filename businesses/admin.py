@@ -23,6 +23,12 @@ class PhotoInline(admin.TabularInline):
 @admin.register(models.Business)
 class BusinessAdmin(admin.ModelAdmin):
     inlines = (PhotoInline,)
+    list_display = (
+        "name_kor",
+        "name_eng",
+        "total_review_count",
+        "average_rating",
+    )
 
 
 @admin.register(models.Review, models.ReplayReview)

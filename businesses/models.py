@@ -78,6 +78,9 @@ class Business(core_models.TimeStampModel):
 
     is_active = models.BooleanField(default=True)
 
+    average_rating = models.FloatField(default=0)
+    total_review_count = models.IntegerField(default=0)
+
     subcategory = models.ForeignKey(
         SubCategory, related_name="businesses", on_delete=models.CASCADE
     )
@@ -87,22 +90,6 @@ class Business(core_models.TimeStampModel):
 
     class Meta:
         verbose_name_plural = "Businesses"
-
-    def average_rating(self):
-        total_rating = 0
-        reviews = self.reviews.all()
-        if not reviews:
-            return 0
-        for review in reviews:
-            total_rating += review.rating
-        return total_rating / len(reviews)
-
-    def total_review_count(self):
-        cnt = 0
-        for review in self.reviews.all():
-            cnt += review.replies.count() + 1
-
-        return cnt
 
 
 class Photo(core_models.TimeStampModel):
@@ -114,7 +101,8 @@ class Photo(core_models.TimeStampModel):
 
 class Review(core_models.TimeStampModel):
     rating = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)]
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        choices=((1, "형편없다"), (2, "별로다"), (3, "보통이다"), (4, "좋다"), (5, "아주좋다")),
     )
     review = models.TextField()
     user = models.ForeignKey(
@@ -123,6 +111,7 @@ class Review(core_models.TimeStampModel):
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, related_name="reviews"
     )
+    is_active = models.BooleanField(default=True)
 
 
 class ReplayReview(core_models.TimeStampModel):
@@ -131,3 +120,4 @@ class ReplayReview(core_models.TimeStampModel):
         "users.User", on_delete=models.CASCADE, related_name="replies"
     )
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="replies")
+    is_active = models.BooleanField(default=True)
