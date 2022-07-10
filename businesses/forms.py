@@ -13,7 +13,8 @@ class CreateReviewForm(forms.ModelForm):
         labels = {"rating": "평가", "review": "리뷰"}
         widgets = {"review": forms.Textarea(attrs={"rows": 5})}
 
-    # rating = forms.ChoiceField(
-    #     widget=forms.RadioSelect,
-    #     choices=((i, i) for i in range(1, 6)),
-    # )
+    def clean_rating(self):
+        return int(self.cleaned_data.get("rating"))
+
+    def save(self):
+        return super().save(commit=False)

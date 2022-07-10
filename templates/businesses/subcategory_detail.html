@@ -1,5 +1,5 @@
 {% extends 'mixins/businesses/business_base.html' %}
-{% load phone star queryset %}
+{% load phone queryset %}
 
 {% block title %}{{ subcategory.name }}{% endblock %}
 
@@ -11,7 +11,7 @@
 </h1>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-{% for business in subcategory.businesses.all|order_by:"-total_review_count,-average_rating,name_kor,name_eng" %}
+{% for business in subcategory.businesses.all|order_by:"-total_review_count,-total_rating_sum,name_kor,name_eng" %}
     <div class="p-5 shadow rounded">
         <a href="{% url 'businesses:business' subcategory.category.slug subcategory.slug business.slug %}">
             <div class="font-bold text-md">{{ business.name_kor }}</div>
@@ -33,25 +33,9 @@
         <hr class="my-2">
         <a href="{% url 'businesses:business' subcategory.category.slug subcategory.slug business.slug %}">
             <div class="flex justify-between font-medium">
-                <div class="text-green-600">
-                    {% if business.average_rating %}
-                        {% with business.average_rating|full_star as range %}
-                        {% for _ in range %}
-                        <i class="fa-solid fa-star"></i>
-                        {% endfor %}
-                        {% endwith %}
-
-                        {% if business.average_rating|has_half_star %}
-                        <i class="fa-solid fa-star-half-stroke"></i>
-                        {% endif %}
-
-                        {% with business.average_rating|empty_star as range %}
-                        {% for _ in range %}
-                        <i class="fa-regular fa-star"></i>
-                        {% endfor %}
-                        {% endwith %}
-                    {% endif %}
-                </div>
+                {% if business.total_review_count %}
+                    {% include 'mixins/businesses/rating_star.html' with average_rating=business.average_rating %}
+                {% endif %}
                 <div>
                     {{ business.total_review_count }} Reviews
                 </div>

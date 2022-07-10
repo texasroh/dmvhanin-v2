@@ -1,0 +1,19 @@
+{% load star %}
+<div class="text-green-600 flex items-center">
+    {% with average_rating|full_star as range %}
+    {% for _ in range %}
+    <i class="fa-solid fa-star"></i>
+    {% endfor %}
+    {% endwith %}
+
+    {% if average_rating|has_half_star %}
+    <i class="fa-solid fa-star-half-stroke"></i>
+    {% endif %}
+
+    {% with average_rating|empty_star as range %}
+    {% for _ in range %}
+    <i class="fa-regular fa-star"></i>
+    {% endfor %}
+    {% endwith %}
+    <span class="font-bold ml-2">{{ average_rating }}</span>
+</div>

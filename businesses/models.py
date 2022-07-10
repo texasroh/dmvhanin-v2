@@ -66,19 +66,21 @@ class Business(core_models.TimeStampModel):
     business_type = models.CharField(
         choices=BUSINESS_TYPE_CHOICES, max_length=20, default=BUSINESS_TYPE_OFFLINE
     )
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
-    address = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    state = models.CharField(choices=STATE_CHOICES, max_length=3)
-    zipcode = models.CharField(max_length=5, validators=[zipcode_validator])
+    address = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    state = models.CharField(choices=STATE_CHOICES, max_length=3, null=True, blank=True)
+    zipcode = models.CharField(
+        max_length=5, validators=[zipcode_validator], null=True, blank=True
+    )
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     website = models.CharField(max_length=100, null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
 
-    average_rating = models.FloatField(default=0)
+    total_rating_sum = models.IntegerField(default=0)
     total_review_count = models.IntegerField(default=0)
 
     subcategory = models.ForeignKey(
@@ -91,6 +93,17 @@ class Business(core_models.TimeStampModel):
     class Meta:
         verbose_name_plural = "Businesses"
 
+    def add_review(self, rating):
+        self.total_review_count += 1
+        self.total_rating_sum += rating
+        self.save()
+        return
+
+    def average_rating(self):
+        if not self.total_review_count:
+            return 0
+        return self.total_rating_sum / self.total_review_count
+
 
 class Photo(core_models.TimeStampModel):
     file = models.ImageField(upload_to="business_photos")
@@ -102,7 +115,13 @@ class Photo(core_models.TimeStampModel):
 class Review(core_models.TimeStampModel):
     rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)],
-        choices=((1, "형편없다"), (2, "별로다"), (3, "보통이다"), (4, "좋다"), (5, "아주좋다")),
+        choices=(
+            (5, "★★★★★"),
+            (4, "★★★★"),
+            (3, "★★★"),
+            (2, "★★"),
+            (1, "★"),
+        ),
     )
     review = models.TextField()
     user = models.ForeignKey(

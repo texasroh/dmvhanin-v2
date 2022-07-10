@@ -7,6 +7,7 @@ from django.db import IntegrityError
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         data = pd.read_csv("businesses.csv")
+        data = data.mask(data.isnull(), None)
         for idx, row in data.iterrows():
             sub_cat = SubCategory.objects.get(
                 name=row["category2"], category__name=row["category1"]
@@ -24,7 +25,7 @@ class Command(BaseCommand):
                         address=row["address"],
                         city=row["city"],
                         state=row["state"],
-                        zipcode=int(row["zipcode"]),
+                        zipcode=int(row["zipcode"]) if row["zipcode"] else None,
                         phone_number=row["phone_number"],
                         email=row["email"],
                         website=row["website"],

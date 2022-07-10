@@ -14,7 +14,6 @@ from . import forms, mixins, models
 class LoginView(mixins.LoggedOutOnlyView, FormView):
     template_name = "auth/login.html"
     form_class = forms.LoginForm
-    success_url = reverse_lazy("core:home")
 
     def form_valid(self, form):
         email = form.cleaned_data.get("email")
@@ -25,6 +24,9 @@ class LoginView(mixins.LoggedOutOnlyView, FormView):
             messages.success(self.request, f"{user.nickname}님 안녕하세요.")
 
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return self.request.GET.get("next", reverse("core:home"))
 
 
 class SignUpView(mixins.LoggedOutOnlyView, FormView):

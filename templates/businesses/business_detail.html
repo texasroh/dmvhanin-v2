@@ -1,25 +1,67 @@
 {% extends 'mixins/businesses/business_base.html' %}
-{% load phone star queryset %}
+{% load phone queryset %}
 
 {% block title %}{{ business.name_kor }}{% endblock %}
 
 {% block sub_content %}
 
-<h1 class="font-bold text-lg">{{ business.name_kor }}</h1>
+<span class="text-teal-500 font-bold text-sm mb-3 inline-block"><a href="{% url 'businesses:subcategory' business.subcategory.category.slug business.subcategory.slug %}"><i class="fa-solid fa-arrow-left"></i> {{ business.subcategory.name }}</a></span>
+<h1 class="font-bold text-xl">{{ business.name_kor }}</h1>
 <h2 class="font-medium text-md">{{ business.name_eng }}</h2>
+{% if business.total_review_count %}
+    {% include 'mixins/businesses/rating_star.html' with average_rating=business.average_rating %}
+{% endif %}
 
+<hr>
+{% if business.description %}
+    {{ business.description }}
+{% else %}
+<div class="text-sm text-center font-bold">
+    비지니스 상세페이지를 바꾸시고 싶으면 신청해주세요
+</div>
+{% endif %}
 
-<hr class="my-4">
+<hr>
+{% if user.is_authenticated %}
 <form method="post">
     {% csrf_token %}
-    <div class="grid grid-cols-2 gap-4">
-        {{ review_form.as_p }}
+    <input type="hidden" name="action" value="review" />
+    <div class="flex flex-col md:flex-row gap-4">
+        <div class="basis-1/4 shrink-0">
+            {{ review_form.rating.label_tag }}
+            <div class="text-green-600">{{ review_form.rating }}</div>
+        </div>
+        <div class="grow">
+            {{ review_form.review.label_tag }}
+            {{ review_form.review }}
+        </div>
     </div>
-    <button>Save</button>
+    <div class="text-right">
+        <button class="rounded font-bold text-sm px-4 py-1 bg-blue-700 text-white">남기기</button>
+    </div>
 </form>
-{% for review in business.reviews.all|order_by:'pk' %}
+{% else %}
+<div class="text-center text-sm font-bold">
+<a href="{% url 'users:login' %}?next={{ request.path }}">로그인하고 리뷰남기기</a>
+</div>
+{% endif %}
 
-{% endfor %}
+<hr>
+<h3 class="font-bold text-lg">리뷰 ({{ business.reviews.count }})</h3>
+<div>
+    {% for review in business.reviews.all|order_by:'-pk' %}
+    <div class="flex flex-col md:flex-row gap-4">
+        <div class="basis-1/4 shrink-0">
+            <div>{{ review.user.nickname }}</div>
+            <div class="text-sm text-gray-400 font-medium">{{ review.created }}</div>
+            <div>{% include 'mixins/businesses/rating_star.html' with average_rating=review.rating %}</div>
+        </div>
+        <div>
+            <p>{{ review.review }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 
 
 <div class="fixed left-0 top-1/2 lg:hidden z-10">
