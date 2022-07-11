@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -60,6 +61,10 @@ class BusinessDetailView(View):
         )
 
     def post(self, request, cat_slug, sub_slug, biz_slug):
+        if not request.user.nickname:
+            messages.error(request, "닉네임 설정이 필요합니다")
+            return redirect(reverse("users:profile"))
+
         try:
             business = models.Business.objects.get(
                 slug=biz_slug,

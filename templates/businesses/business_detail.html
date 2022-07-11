@@ -22,7 +22,7 @@
 {% endif %}
 
 <hr>
-{% if user.is_authenticated %}
+{% if user.is_authenticated and user.nickname %}
 <form method="post">
     {% csrf_token %}
     <input type="hidden" name="action" value="review" />
@@ -40,9 +40,13 @@
         <button class="rounded font-bold text-sm px-4 py-1 bg-blue-700 text-white">남기기</button>
     </div>
 </form>
+{% elif user.is_authenticated and not user.nickname %}
+<div class="text-center text-sm font-bold">
+    <a href="{% url 'users:profile' %}?next={{ request.path }}">리뷰를 남기시려면 닉네임을 설정해주세요</a>
+</div>
 {% else %}
 <div class="text-center text-sm font-bold">
-<a href="{% url 'users:login' %}?next={{ request.path }}">로그인하고 리뷰남기기</a>
+    <a href="{% url 'users:login' %}?next={{ request.path }}">로그인하고 리뷰남기기</a>
 </div>
 {% endif %}
 

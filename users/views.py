@@ -74,9 +74,11 @@ def complete_verification(request, secret):
 def google_login(request):
     CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
     REDIRECT_URI = os.environ.get("DOMAIN") + reverse("users:google-callback")
-    return redirect(
-        f"https://accounts.google.com/o/oauth2/v2/auth?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
-    )
+    next = request.GET.get("next", None)
+    url = f"https://accounts.google.com/o/oauth2/v2/auth?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
+    if next:
+        url += f"&state={next}"
+    return redirect(url)
 
 
 class GoogleException(Exception):
@@ -131,6 +133,10 @@ def google_callback(request):
         login(request, user)
         if user.nickname:
             messages.success(request, f"{user.nickname}님 안녕하세요.")
+
+            state = request.GET.get("state")
+            if state:
+                return redirect(state)
             return redirect(reverse("core:home"))
         messages.info(request, "닉네임을 설정해주세요")
         return redirect(reverse("users:profile"))
