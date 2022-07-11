@@ -149,9 +149,11 @@ def google_callback(request):
 def kakao_login(request):
     REST_API_KEY = os.environ.get("KAKAO_REST_API_KEY")
     REDIRECT_URI = os.environ.get("DOMAIN") + reverse("users:kakao-callback")
-    return redirect(
-        f"https://kauth.kakao.com/oauth/authorize?client_id={REST_API_KEY}&redirect_uri={REDIRECT_URI}&response_type=code&scope=account_email"
-    )
+    next = request.GET.get("next", None)
+    url = f"https://kauth.kakao.com/oauth/authorize?client_id={REST_API_KEY}&redirect_uri={REDIRECT_URI}&response_type=code&scope=account_email"
+    if next:
+        url += f"&state={next}"
+    return redirect(url)
 
 
 class KakaoException(Exception):
@@ -211,6 +213,9 @@ def kakao_callback(request):
         login(request, user)
         if user.nickname:
             messages.success(request, f"{user.nickname}님 안녕하세요.")
+            state = request.GET.get("state")
+            if state:
+                return redirect(state)
             return redirect(reverse("core:home"))
         messages.info(request, "닉네임을 설정해주세요")
         return redirect(reverse("users:profile"))
