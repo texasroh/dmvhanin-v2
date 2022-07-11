@@ -15,5 +15,5 @@
     <i class="fa-regular fa-star"></i>
     {% endfor %}
     {% endwith %}
-    <span class="font-bold ml-2">{{ average_rating }}</span>
+    <span class="font-bold ml-2">{{ average_rating|floatformat:-2 }}</span>
 </div>

@@ -46,11 +46,10 @@
 </div>
 {% endif %}
 
-<hr>
 <h3 class="font-bold text-lg">리뷰 ({{ business.reviews.count }})</h3>
 <div>
     {% for review in business.reviews.all|order_by:'-pk' %}
-    <div class="flex flex-col md:flex-row gap-4">
+    <div class="flex flex-col md:flex-row gap-4 py-4 border-y">
         <div class="basis-1/4 shrink-0">
             <div>{{ review.user.nickname }}</div>
             <div class="text-sm text-gray-400 font-medium">{{ review.created }}</div>
