@@ -12,7 +12,23 @@ header {
         @apply h-10;
     }
     .nav-link {
-        @apply text-gray-300 font-bold ml-5;
+        @apply text-gray-300 font-bold ml-5 inline-block my-2 lg:my-0;
+    }
+    .main-menu-btn .close {
+        @apply hidden;
+    }
+    &.show{
+        .main-menu-btn {
+            .menu {
+                @apply hidden;
+            }
+            .close{
+                @apply block;
+            }
+        }
+        .main-menu{
+            @apply right-0;
+        }
     }
 }
 
