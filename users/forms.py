@@ -75,3 +75,9 @@ class SignUpForm(forms.ModelForm):
         # user = super().save(commit=False)
         # user.set_password(password)
         # user.save()
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = models.User
+        fields = ("nickname",)

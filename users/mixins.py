@@ -34,3 +34,13 @@ def logout_required(func):
         return func(request, *args, **kwargs)
 
     return wrapper
+
+
+def login_only(func):
+    @wraps(func)
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_anonymous:
+            return redirect(reverse("users:login"))
+        return func(request, *args, **kwargs)
+
+    return wrapper

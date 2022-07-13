@@ -4,6 +4,7 @@ import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.http import HttpResponse, HttpResponseServerError
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
@@ -47,8 +48,16 @@ class SignUpView(mixins.LoggedOutOnlyView, FormView):
         return super().form_valid(form)
 
 
-def profile(request):
-    return redirect(reverse("core:home"))
+class ProfileView(mixins.LoggedInOnlyView, FormView):
+    template_name = "auth/profile.html"
+    form_class = forms.ProfileForm
+    success_url = reverse_lazy("users:profile")
+
+
+@mixins.login_only
+def send_email_verification(request):
+    request.user.verify_email()
+    return HttpResponse(status=201)
 
 
 def log_out(request):
@@ -123,12 +132,12 @@ def google_callback(request):
                 user = models.User.objects.create_user(
                     email, None, google_id=id, email_verified=True
                 )
-            nickname = profile_json.get("name")
-            try:
-                user.nickname = nickname
-                user.save()
-            except IntegrityError:
-                user.nickname = None
+                nickname = profile_json.get("name")
+                try:
+                    user.nickname = nickname
+                    user.save()
+                except IntegrityError:
+                    user.nickname = None
 
         login(request, user)
         if user.nickname:
@@ -200,15 +209,21 @@ def kakao_callback(request):
                         kakao_id=id,
                         email_verified=True,
                     )
+                    try:
+                        nickname = profile_json.get("properties").get("nickname")
+                        user.nickname = nickname
+                        user.save()
+                    except IntegrityError:
+                        user.nickname = None
             else:
                 user = models.User.objects.create_user(str(id), None, kakao_id=id)
 
-            try:
-                nickname = profile_json.get("properties").get("nickname")
-                user.nickname = nickname
-                user.save()
-            except IntegrityError:
-                user.nickname = None
+                try:
+                    nickname = profile_json.get("properties").get("nickname")
+                    user.nickname = nickname
+                    user.save()
+                except IntegrityError:
+                    user.nickname = None
 
         login(request, user)
         if user.nickname:

@@ -8,6 +8,8 @@
             <i class="fa-solid fa-bars fa-lg menu"></i>
             <i class="fa-solid fa-xmark fa-lg close"></i>
         </div>
+        <div class="fixed lg:hidden -right-full bg-">
+        </div>
         <div class="main-menu fixed lg:static top-0 pt-16 lg:pt-0 -right-full transition-all ease-in-out duration-300 h-screen lg:h-auto w-1/2 md:w-1/3 bg-stone-700 lg:bg-transparent lg:grow lg:flex justify-between">
             <ul class="lg:flex">
                 <li><a href="{% url 'businesses:categories' %}" class="nav-link">한인업소록</a></li>
@@ -18,7 +20,7 @@
                     {% if user.is_superuser %}
                     <li><a href="{% url 'admin:index' %}" class="nav-link">Admin Site</a></li>
                     {% else %}
-                    <li><a href="" class="nav-link">
+                    <li><a href="{% url 'users:profile' %}" class="nav-link">
                         {% if user.nickname %}
                         <b>{{ user.nickname }}</b>님
                         {% else %}

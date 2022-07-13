@@ -55,7 +55,7 @@ class User(AbstractUser, core_models.TimeStampModel):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
-    nickname = models.CharField(max_length=50, unique=True, null=True)
+    nickname = models.CharField("닉네임", max_length=50, unique=True, null=True)
     email_verified = models.BooleanField(default=False)
     email_secret = models.CharField(max_length=120, null=True, unique=True)
     google_id = models.CharField(max_length=100, null=True, unique=True)
@@ -74,7 +74,7 @@ class User(AbstractUser, core_models.TimeStampModel):
                 self.save()
                 break
             except IntegrityError:
-                print("Integrity Error June")
+                pass
         html_message = render_to_string(
             "emails/verify_email.html",
             {
