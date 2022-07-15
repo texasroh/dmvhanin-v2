@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as PWValidationError
 
@@ -77,7 +78,34 @@ class SignUpForm(forms.ModelForm):
         # user.save()
 
 
-class ProfileForm(forms.ModelForm):
+class NicknameForm(forms.ModelForm):
     class Meta:
         model = models.User
         fields = ("nickname",)
+
+    def clean_nickname(self):
+        nickname = self.cleaned_data.get("nickname")
+        try:
+            models.User.objects.get(nickname=nickname)
+            raise forms.ValidationError("이미 존재하는 닉네임입니다.")
+        except models.User.DoesNotExist:
+            pass
+        return nickname
+
+
+class PasswordForm(forms.ModelForm):
+    class Meta:
+        model = models.User
+        fields = ("password",)
+        widgets = {"password": forms.PasswordInput(attrs={"placeholder": "현재 비밀번호"})}
+
+    new_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "새 비밀번호"})
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "비밀번호 확인"})
+    )
+
+    def clean_password(self):
+        password = self.cleaned_data.get("password")
+        if not authenticate()

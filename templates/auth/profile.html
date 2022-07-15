@@ -4,52 +4,97 @@
 
 
 {% block content %}
-<div>
+<div class="w-full md:w-5/6 mx-auto">
     <div class="flex flex-col md:flex-row gap-4">
         <div class="basis-1/5 shrink-0">
             <div class="font-bold text-lg">이메일</div>
         </div>
         <div class="grow">
-            <div class="rounded w-full mx-auto shadow-md shadow-gray-400 p-6">
-                <div class="grow md:grow-0 md:basis-3/5 lg:basis-2/5">
+            <div class="rounded w-full shadow-md shadow-gray-400 p-6 flex flex-col lg:flex-row lg:items-center gap-4">
+                <div class="shrink-0 basis-3/5 xl:basis-1/2">
                     <input value="{{ user.email }}" disabled />
                 </div>
-                <div class="text-right md:text-left">
+                <div class="text-right lg:text-left">
                     {% if user.email_verified %}
                     <p class="text-sm text-green-700 font-bold"><i class="fa-solid fa-circle-check"></i> email_verified</p>
                     {% else %}
-                    <button class="email-verify-btn mx-auto bg-gray-200 rounded px-3 py-1 font-bold text-sm mt-1">인증하기</button>
+                    <button class="email-verify-btn bg-gray-200 rounded px-3 py-1 font-bold text-sm">인증메일 보내기</button>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
     <hr>
-</div>
-
-<div class="w-full md:w-3/4 xl:w-1/2 mx-auto shadow-md shadow-gray-400 p-6 mt-5">
-    <div class="flex flex-col md:flex-row items-center md:gap-4">
-        <label class="basis-1/5 shrink-0 text-right font-bold">이메일</label>
-        <input value="{{ user.email }}" disabled />
-    </div>
-    <div class="text-right mb-4">
-        {% if user.email_verified %}
-        <p class="text-sm text-green-700 font-bold"><i class="fa-solid fa-circle-check"></i> email_verified</p>
-        {% else %}
-        <button class="email-verify-btn mx-auto bg-gray-200 rounded px-3 py-1 font-bold text-sm mt-1">이메일 인증하기</button>
-        {% endif %}
-    </div>
-    <form method="post">
-        {% csrf_token %}
-        <div class="flex flex-col md:flex-row items-center md:gap-4">
-            <label for="{{ form.nickname.id_for_label }}" class="basis-1/5 shrink-0 text-right font-bold">{{ form.nickname.label }}</label>
-            <div class="grow">{{ form.nickname }}</div>
-            <div class="">
-                <button class="font-bold text-sm px-3 py-1 rounded bg-gray-200">저장</button>
+    {% if user.google_id or user.kakao_id %}
+    <div class="flex flex-col md:flex-row gap-4">
+        <div class="basis-1/5 shrink-0">
+            <div class="font-bold text-lg">연결된 소셜</div>
+        </div>
+        <div class="grow">
+            <div class="rounded w-full shadow-md shadow-gray-400 p-6 flex gap-8">
+                {% if user.google_id %}
+                <span class="text-gray-50 bg-red-500 rounded-full w-32 flex items-center justify-center">
+                    <i class="fa-brands fa-google mr-2 font-bold rounded-full  p-2"></i> Google
+                </span>
+                {% endif %}
+                {% if user.kakao_id %}
+                <span class="text-yellow-800 bg-yellow-300 rounded-full w-32 flex items-center justify-center">
+                    <i class="fa-solid fa-comment mr-2 fa-lg"></i> Kakao
+                </span>
+                {% endif %}
             </div>
         </div>
-    </form>
+    </div>
+    <hr>
+    {% endif %}
+    <div class="flex flex-col md:flex-row gap-4">
+        <div class="basis-1/5 shrink-0">
+            <div class="font-bold text-lg">닉네임 변경</div>
+        </div>
+        <div class="grow">
+            <div class="rounded w-full shadow-md shadow-gray-400 p-6">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="nickname" />
+                    <div class="flex flex-col lg:flex-row gap-4 lg:items-center">
+                        <div class="shrink-0 basis-3/5 xl:basis-1/2">
+                            {{ nickname_form.nickname }}
+                        </div>
+                        <div class="text-right lg:text-left">
+                            <button class="bg-gray-200 rounded px-3 py-1 font-bold text-sm">닉네임 변경</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <hr>
+    {% if user.has_usable_password %}
+    <div class="flex flex-col md:flex-row gap-4">
+        <div class="basis-1/5 shrink-0">
+            <div class="font-bold text-lg">비밀번호 변경</div>
+        </div>
+        <div class="grow">
+            <div class="rounded w-full shadow-md shadow-gray-400 p-6 flex flex-col gap-2">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="password" />
+                    <div class="flex flex-col gap-2">
+                        {% for field in password_form %}
+                        {{ field }}
+                        {% endfor %}
+                        <div class="text-right">
+                            <button class="bg-gray-200 rounded px-3 py-1 font-bold text-sm">비밀번호 변경</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
+
+
 
 <script>
     (() => {

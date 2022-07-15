@@ -7,7 +7,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseServerError
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView
+from django.views.generic import FormView, View
 
 from . import forms, mixins, models
 
@@ -48,10 +48,27 @@ class SignUpView(mixins.LoggedOutOnlyView, FormView):
         return super().form_valid(form)
 
 
-class ProfileView(mixins.LoggedInOnlyView, FormView):
-    template_name = "auth/profile.html"
-    form_class = forms.ProfileForm
-    success_url = reverse_lazy("users:profile")
+class ProfileView(mixins.LoggedInOnlyView, View):
+    def get(self, request):
+        nickname_form = forms.NicknameForm(initial={"nickname": request.user.nickname})
+        password_form = forms.PasswordForm()
+        return render(
+            request,
+            "auth/profile.html",
+            {"nickname_form": nickname_form, "password_form": password_form},
+        )
+
+    def post(self, request):
+        action = request.POST.get("action")
+        if action == "nickname":
+            nickname_form = forms.NicknameForm(request.POST)
+            if nickname_form.is_valid():
+                request.user.nickname = nickname_form.cleaned_data.get("nickname")
+                request.user.save()
+                messages.success(request, "닉네임 변경 완료")
+        elif action == "password":
+            pass
+        return redirect(reverse("users:profile"))
 
 
 @mixins.login_only
@@ -132,6 +149,8 @@ def google_callback(request):
                 user = models.User.objects.create_user(
                     email, None, google_id=id, email_verified=True
                 )
+                user.set_unusable_password()
+                user.save()
                 nickname = profile_json.get("name")
                 try:
                     user.nickname = nickname
@@ -195,29 +214,21 @@ def kakao_callback(request):
             user = models.User.objects.get(kakao_id=id)
         except models.User.DoesNotExist:
             email = profile_json.get("kakao_account").get("email")
-            if email:
-                try:
-                    user = models.User.objects.get(email=email)
-                    user.kakao_id = id
-                    user.email_verified = True
-                    user.email_secret = None
-                    user.save()
-                except models.User.DoesNotExist:
-                    user = models.User.objects.create_user(
-                        email,
-                        None,
-                        kakao_id=id,
-                        email_verified=True,
-                    )
-                    try:
-                        nickname = profile_json.get("properties").get("nickname")
-                        user.nickname = nickname
-                        user.save()
-                    except IntegrityError:
-                        user.nickname = None
-            else:
-                user = models.User.objects.create_user(str(id), None, kakao_id=id)
-
+            try:
+                user = models.User.objects.get(email=email)
+                user.kakao_id = id
+                user.email_verified = True
+                user.email_secret = None
+                user.save()
+            except models.User.DoesNotExist:
+                user = models.User.objects.create_user(
+                    email,
+                    None,
+                    kakao_id=id,
+                    email_verified=True,
+                )
+                user.set_unusable_password()
+                user.save()
                 try:
                     nickname = profile_json.get("properties").get("nickname")
                     user.nickname = nickname
