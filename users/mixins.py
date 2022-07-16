@@ -26,6 +26,14 @@ class LoggedInOnlyView(LoginRequiredMixin):
         return super().handle_no_permission()
 
 
+class HasUsablePasswordOnly(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.has_usable_password()
+
+    def handle_no_permission(self):
+        raise Http404()
+
+
 def logout_required(func):
     @wraps(func)
     def wrapper(request, *args, **kwargs):

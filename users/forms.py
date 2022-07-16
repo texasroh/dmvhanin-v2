@@ -91,21 +91,3 @@ class NicknameForm(forms.ModelForm):
         except models.User.DoesNotExist:
             pass
         return nickname
-
-
-class PasswordForm(forms.ModelForm):
-    class Meta:
-        model = models.User
-        fields = ("password",)
-        widgets = {"password": forms.PasswordInput(attrs={"placeholder": "현재 비밀번호"})}
-
-    new_password = forms.CharField(
-        widget=forms.PasswordInput(attrs={"placeholder": "새 비밀번호"})
-    )
-    confirm_password = forms.CharField(
-        widget=forms.PasswordInput(attrs={"placeholder": "비밀번호 확인"})
-    )
-
-    def clean_password(self):
-        password = self.cleaned_data.get("password")
-        if not authenticate()
