@@ -3,11 +3,13 @@ import os
 import requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseServerError
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, View
+from django.views.generic import FormView, UpdateView, View
 
 from . import forms, mixins, models
 
@@ -48,27 +50,55 @@ class SignUpView(mixins.LoggedOutOnlyView, FormView):
         return super().form_valid(form)
 
 
-class ProfileView(mixins.LoggedInOnlyView, View):
-    def get(self, request):
-        nickname_form = forms.NicknameForm(initial={"nickname": request.user.nickname})
-        password_form = forms.PasswordForm()
-        return render(
-            request,
-            "auth/profile.html",
-            {"nickname_form": nickname_form, "password_form": password_form},
-        )
+# class ProfileView(mixins.LoggedInOnlyView, View):
+#     def get(self, request):
+#         nickname_form = forms.NicknameForm(initial={"nickname": request.user.nickname})
+#         password_form = forms.PasswordForm()
+#         return render(
+#             request,
+#             "auth/profile.html",
+#             {"nickname_form": nickname_form, "password_form": password_form},
+#         )
 
-    def post(self, request):
-        action = request.POST.get("action")
-        if action == "nickname":
-            nickname_form = forms.NicknameForm(request.POST)
-            if nickname_form.is_valid():
-                request.user.nickname = nickname_form.cleaned_data.get("nickname")
-                request.user.save()
-                messages.success(request, "닉네임 변경 완료")
-        elif action == "password":
-            pass
-        return redirect(reverse("users:profile"))
+#     def post(self, request):
+#         action = request.POST.get("action")
+#         if action == "nickname":
+#             nickname_form = forms.NicknameForm(request.POST)
+#             if nickname_form.is_valid():
+#                 request.user.nickname = nickname_form.cleaned_data.get("nickname")
+#                 request.user.save()
+#                 messages.success(request, "닉네임 변경 완료")
+#         elif action == "password":
+#             pass
+#         return redirect(reverse("users:profile"))
+
+
+class ProfileView(mixins.LoggedInOnlyView, SuccessMessageMixin, UpdateView):
+    template_name = "auth/profile.html"
+    fields = ("nickname",)
+    success_message = "닉네임 변경 완료"
+    success_url = reverse_lazy("users:profile")
+
+    def get_object(self):
+        return models.User.objects.get(pk=self.request.user.pk)
+
+
+class PasswordUpdateView(
+    mixins.LoggedInOnlyView,
+    mixins.HasUsablePasswordOnly,
+    SuccessMessageMixin,
+    PasswordChangeView,
+):
+    success_message = "비밀번호 변경 완료"
+    template_name = "auth/password-update.html"
+    success_url = reverse_lazy("users:profile")
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields["old_password"].widget.attrs = {"placeholder": "현재 비밀번호"}
+        form.fields["new_password1"].widget.attrs = {"placeholder": "새 비밀번호"}
+        form.fields["new_password2"].widget.attrs = {"placeholder": "비밀번호 확인"}
+        return form
 
 
 @mixins.login_only

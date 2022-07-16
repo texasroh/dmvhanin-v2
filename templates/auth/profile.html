@@ -33,12 +33,12 @@
         <div class="grow">
             <div class="rounded w-full shadow-md shadow-gray-400 p-6 flex gap-8">
                 {% if user.google_id %}
-                <span class="text-gray-50 bg-red-500 rounded-full w-32 flex items-center justify-center">
+                <span class="text-gray-50 bg-red-500 rounded-full w-32 flex items-center justify-center py-1">
                     <i class="fa-brands fa-google mr-2 font-bold rounded-full  p-2"></i> Google
                 </span>
                 {% endif %}
                 {% if user.kakao_id %}
-                <span class="text-yellow-800 bg-yellow-300 rounded-full w-32 flex items-center justify-center">
+                <span class="text-yellow-800 bg-yellow-300 rounded-full w-32 flex items-center justify-center py-1">
                     <i class="fa-solid fa-comment mr-2 fa-lg"></i> Kakao
                 </span>
                 {% endif %}
@@ -49,7 +49,7 @@
     {% endif %}
     <div class="flex flex-col md:flex-row gap-4">
         <div class="basis-1/5 shrink-0">
-            <div class="font-bold text-lg">닉네임 변경</div>
+            <div class="font-bold text-lg">닉네임</div>
         </div>
         <div class="grow">
             <div class="rounded w-full shadow-md shadow-gray-400 p-6">
@@ -58,7 +58,7 @@
                     <input type="hidden" name="action" value="nickname" />
                     <div class="flex flex-col lg:flex-row gap-4 lg:items-center">
                         <div class="shrink-0 basis-3/5 xl:basis-1/2">
-                            {{ nickname_form.nickname }}
+                            {{ form.nickname }}
                         </div>
                         <div class="text-right lg:text-left">
                             <button class="bg-gray-200 rounded px-3 py-1 font-bold text-sm">닉네임 변경</button>
@@ -72,22 +72,11 @@
     {% if user.has_usable_password %}
     <div class="flex flex-col md:flex-row gap-4">
         <div class="basis-1/5 shrink-0">
-            <div class="font-bold text-lg">비밀번호 변경</div>
+            <div class="font-bold text-lg">비밀번호</div>
         </div>
         <div class="grow">
-            <div class="rounded w-full shadow-md shadow-gray-400 p-6 flex flex-col gap-2">
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="password" />
-                    <div class="flex flex-col gap-2">
-                        {% for field in password_form %}
-                        {{ field }}
-                        {% endfor %}
-                        <div class="text-right">
-                            <button class="bg-gray-200 rounded px-3 py-1 font-bold text-sm">비밀번호 변경</button>
-                        </div>
-                    </div>
-                </form>
+            <div class="rounded w-full shadow-md shadow-gray-400 p-6">
+                <a href="{% url 'users:password' %}" class="rounded bg-yellow-200 font-bold text-sm py-1 px-3">비밀번호 변경하기</a>
             </div>
         </div>
     </div>
