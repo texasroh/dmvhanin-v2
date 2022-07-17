@@ -19,7 +19,7 @@ header {
     }
     &.show{
         .menu-background {
-            @apply block;
+            @apply block lg:hidden;
         }
         .main-menu-btn {
             .menu {
