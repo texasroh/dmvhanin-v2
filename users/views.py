@@ -53,12 +53,7 @@ class SignUpView(mixins.LoggedOutOnlyView, FormView):
 # class ProfileView(mixins.LoggedInOnlyView, View):
 #     def get(self, request):
 #         nickname_form = forms.NicknameForm(initial={"nickname": request.user.nickname})
-#         password_form = forms.PasswordForm()
-#         return render(
-#             request,
-#             "auth/profile.html",
-#             {"nickname_form": nickname_form, "password_form": password_form},
-#         )
+#         return render(request, "auth/profile.html", {"form": nickname_form})
 
 #     def post(self, request):
 #         action = request.POST.get("action")
@@ -68,16 +63,18 @@ class SignUpView(mixins.LoggedOutOnlyView, FormView):
 #                 request.user.nickname = nickname_form.cleaned_data.get("nickname")
 #                 request.user.save()
 #                 messages.success(request, "닉네임 변경 완료")
+#                 return redirect(reverse("users:profile"))
 #         elif action == "password":
 #             pass
-#         return redirect(reverse("users:profile"))
+#         return render(request, "auth/profile.html", {"form": nickname_form})
 
 
 class ProfileView(mixins.LoggedInOnlyView, SuccessMessageMixin, UpdateView):
     template_name = "auth/profile.html"
-    fields = ("nickname",)
+    # fields = ("nickname",)
     success_message = "닉네임 변경 완료"
     success_url = reverse_lazy("users:profile")
+    form_class = forms.NicknameForm
 
     def get_object(self):
         return models.User.objects.get(pk=self.request.user.pk)
